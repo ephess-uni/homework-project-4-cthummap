@@ -8,27 +8,71 @@ from collections import defaultdict
 def reformat_dates(old_dates):
     """Accepts a list of date strings in format yyyy-mm-dd, re-formats each
     element to a format dd mmm yyyy--01 Jan 2001."""
-    pass
+     
+    return [datetime.strptime(od, "%Y-%m-%d").strftime('%d %b %Y') for od in old_dates]
 
 
 def date_range(start, n):
     """For input date string `start`, with format 'yyyy-mm-dd', returns
     a list of of `n` datetime objects starting at `start` where each
     element in the list is one day after the previous."""
-    pass
+    if not isinstance(start, str) or not isinstance(n, int):
+        raise TypeError()
+    adr = []
+    date_start = datetime.strptime(start, '%Y-%m-%d')
+    for a in range(n):
+        adr.append(date_start + timedelta(days=a))
+    return adr
 
 
 def add_date_range(values, start_date):
     """Adds a daily date range to the list `values` beginning with
     `start_date`.  The date, value pairs are returned as tuples
     in the returned list."""
-    pass
+    vls_len = len(values)
+    d_rng = date_range(start_date, vls_len)
+    c = list(zip(d_rng, values))
+    return c
 
+
+def util_book(infile):
+    
+    fields = ("book_uid,isbn_13,patron_id,date_checkout,date_due,date_returned".
+              split(','))
+    
+    with open(infile, 'r') as f:
+        infileData = DictReader(f, fieldnames=fields)
+        infile_rows = [row for row in infileData]
+
+    infile_rows.pop(0)
+    
+    return infile_rows
 
 def fees_report(infile, outfile):
     """Calculates late fees per patron id and writes a summary report to
     outfile."""
-    pass
+    data = util_book(infile)
+    totalfee = defaultdict(float)
+    DAT_FORMAT = '%m/%d/%Y'
+    
+    
+    for d in data:
+        pid = d['patron_id']
+        due = datetime.strptime(d['date_due'], DAT_FORMAT)
+        returned = datetime.strptime(d['date_returned'], DAT_FORMAT)
+
+        late = (returned - due).days
+        
+        totalfee[pid]+= 0.25 * late if late > 0 else 0.0
+
+    out_list = [
+        {'patron_id': p_id, 'late_fees': f'{fees:0.2f}'} for p_id, fees in totalfee.items()
+    ]
+
+    with open(outfile, 'w') as f:
+        pid_fees = DictWriter(f, ['patron_id', 'late_fees'])
+        pid_fees.writeheader()
+        pid_fees.writerows(out_list)
 
 
 # The following main selection block will only run when you choose
