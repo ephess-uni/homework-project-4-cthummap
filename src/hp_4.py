@@ -54,13 +54,13 @@ def fees_report(infile, outfile):
     data = util_book(infile)
     
     for line in data:
-        patron_id = line['patron_id']
+        pid = line['patron_id']
         due = datetime.strptime(line['date_due'], DAT_FORMAT)
         returned = datetime.strptime(line['date_returned'], DAT_FORMAT)
 
         late = (returned - due).days
         
-        totalfee[patron_id]+= 0.25 * late if late > 0 else 0.0
+        totalfee[pid]+= 0.25 * late if late > 0 else 0.0
 
     out_list = [
         {'patron_id': p_id, 'late_fees': f'{fees:0.2f}'} for p_id, fees in totalfee.items()
