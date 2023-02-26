@@ -54,10 +54,10 @@ def fees_report(infile, outfile):
     DAT_FORMAT = '%m/%d/%Y'
     
     
-    for line in data:
-        pid = line['patron_id']
-        due = datetime.strptime(line['date_due'], DAT_FORMAT)
-        returned = datetime.strptime(line['date_returned'], DAT_FORMAT)
+    for d in data:
+        pid = d['patron_id']
+        due = datetime.strptime(d['date_due'], DAT_FORMAT)
+        returned = datetime.strptime(d['date_returned'], DAT_FORMAT)
 
         late = (returned - due).days
         
