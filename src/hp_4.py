@@ -49,9 +49,10 @@ def util_book(infile):
 def fees_report(infile, outfile):
     """Calculates late fees per patron id and writes a summary report to
     outfile."""
+    data = util_book(infile)
     totalfee = defaultdict(float)
     DAT_FORMAT = '%m/%d/%Y'
-    data = util_book(infile)
+    
     
     for line in data:
         pid = line['patron_id']
