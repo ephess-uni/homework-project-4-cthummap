@@ -44,8 +44,10 @@ def util_book(infile):
         infileData = DictReader(f, fieldnames=fields)
         infile_rows = [row for row in infileData]
 
+    infile_rows.pop(0)
+    
+    return infile_rows
 
-    return infile_rows.pop(0)
 def fees_report(infile, outfile):
     """Calculates late fees per patron id and writes a summary report to
     outfile."""
